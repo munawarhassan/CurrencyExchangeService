@@ -13,7 +13,7 @@ import com.ibm.currency.model.CoreException;
 import com.ibm.currency.model.CurrencyExchangeBean;
 
 
-@FeignClient(name = "CurrencyService1")
+@FeignClient(name = "CurrencyConversionFactorService")
 public interface CurrencyConverterServiceProxy {
 	
 	@RequestMapping(path = "/currencyconversionfactor/getconversionfactor", method = RequestMethod.POST, produces = {"application/json"})	
