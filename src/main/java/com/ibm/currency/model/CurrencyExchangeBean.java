@@ -3,12 +3,16 @@ package com.ibm.currency.model;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CurrencyExchangeBean {
+public class CurrencyExchangeBean extends CoreModel{
 	
 	private String countryCode;
 	
-	private double convertedAmount;
-
+	private Double currencyVal;
+	
+	private Double conversionFactor;
+	
+	private Double convertedAmount;
+	
 	public String getCountryCode() {
 		return countryCode;
 	}
@@ -17,14 +21,28 @@ public class CurrencyExchangeBean {
 		this.countryCode = countryCode;
 	}
 
-	public double getConvertedAmount() {
+	public Double getCurrencyVal() {
+		return currencyVal;
+	}
+
+	public void setCurrencyVal(Double currencyVal) {
+		this.currencyVal = currencyVal;
+	}
+
+	public Double getConvertedAmount() {
 		return convertedAmount;
 	}
 
-	public void setConvertedAmount(double convertedAmount) {
+	public void setConvertedAmount(Double convertedAmount) {
 		this.convertedAmount = convertedAmount;
 	}
-	
-	
+
+	public Double getConversionFactor() {
+		return conversionFactor;
+	}
+
+	public void setConversionFactor(Double conversionFactor) {
+		this.conversionFactor = conversionFactor;
+	}	
 
 }
