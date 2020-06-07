@@ -13,11 +13,11 @@ import com.ibm.currency.model.CoreException;
 import com.ibm.currency.model.CurrencyExchangeBean;
 
 
-@FeignClient(name = "CurrencyConversionFactorService")
+@FeignClient(name = "CurrencyConversionFactorService" , fallback = CurrencyConverterServiceFallback.class)
 public interface CurrencyConverterServiceProxy {
 	
 	@RequestMapping(path = "/currencyconversionfactor/getconversionfactor", method = RequestMethod.POST, produces = {"application/json"})	
-    public CurrencyExchangeBean getConversionFactor(@RequestBody CurrencyExchangeBean currencyExchangeBean) throws CoreException;
+    public CurrencyExchangeBean getConversionFactor(@RequestBody CurrencyExchangeBean currencyExchangeBean); 
 			   
 	 
 }

@@ -40,10 +40,10 @@ public class CurrencyExchangeService{
 			Double convertedAmount = currencyVal * conversionfactor ;
 			currencyExchangeBean.setConvertedAmount(convertedAmount);
 			currencyExchangeBean.setConversionFactor(conversionfactor);
-			return populateSuccessResponseWithResult(currencyExchangeBean, "Successfully Coverted USD to "+ currencyExchangeBean.getCountryCode());
+			return populateSuccessResponseWithResult(currencyExchangeBean, responseBean.getMessage()+" "+ currencyExchangeBean.getCountryCode());
 		} catch (Exception ex) {
 		
-			return populateFailureResponse("Failed to convert currency"+ ex.getMessage());
+			return populateFailureResponse("Failed to convert currency as no record found");
 		}
 	}
 	
@@ -61,11 +61,11 @@ public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBea
 	}
 
 public ResponseEntity<?>  populateFailureResponse( String message){	
-	/*respModel = new CoreResponseModel();
+	respModel = new CoreResponseModel();
 	respModel.setStatusCode(HttpStatus.BAD_REQUEST.value());
 	respModel.setSuccess(false);
 	respModel.setMessage(message);		
-	respEntity = new ResponseEntity<Object>(respModel,HttpStatus.BAD_REQUEST);		*/
+	respEntity = new ResponseEntity<Object>(respModel,HttpStatus.BAD_REQUEST);		
 	return respEntity;
 }
 

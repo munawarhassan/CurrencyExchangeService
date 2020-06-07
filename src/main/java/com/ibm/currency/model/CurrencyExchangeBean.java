@@ -13,6 +13,8 @@ public class CurrencyExchangeBean extends CoreModel{
 	
 	private Double convertedAmount;
 	
+	private String message;
+	
 	public String getCountryCode() {
 		return countryCode;
 	}
@@ -43,6 +45,15 @@ public class CurrencyExchangeBean extends CoreModel{
 
 	public void setConversionFactor(Double conversionFactor) {
 		this.conversionFactor = conversionFactor;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}	
 
+	
 }

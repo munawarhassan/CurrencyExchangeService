@@ -5,4 +5,9 @@ spring:
     name: CurrencyExchangeService
   profiles:
     active: dev
+       
+feign:
+  hystrix:
+    enabled: true
+
   
