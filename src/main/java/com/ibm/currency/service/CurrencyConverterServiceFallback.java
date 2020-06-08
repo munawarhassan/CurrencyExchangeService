@@ -25,7 +25,7 @@ public class CurrencyConverterServiceFallback implements CurrencyConverterServic
 		}else if(currencyExchangeBean.getCountryCode().equalsIgnoreCase("AUD")) {
 			bean.setConversionFactor(curencyExchangeConfig.getAUDconversionfactor());
 		}
-		bean.setMessage("Convertet Service Down ... converted with DEFAULT RATE  from USD to");
+		bean.setMessage("Converter Service Down ... converted with DEFAULT RATE  from USD to");
 		return bean;
 	}
 	

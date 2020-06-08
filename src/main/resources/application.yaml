@@ -5,6 +5,13 @@ spring:
     name: CurrencyExchangeService
   profiles:
     active: dev
+    
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+        
        
 feign:
   hystrix:
