@@ -19,19 +19,18 @@ import org.springframework.web.client.RestTemplate;
 @EnableCircuitBreaker
 @EnableHystrix
 @EnableHystrixDashboard
+@EnableDiscoveryClient
 @SpringBootApplication
 public class CurrencyExchangeServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CurrencyExchangeServiceApplication.class, args);
-	}
-	
-  @Bean
-   @LoadBalanced
-   public RestTemplate restTemplate(RestTemplateBuilder builder) {
-      return builder.build();
-   }
-  
-  
-
+	}	
+ 
+	@Bean
+	   @LoadBalanced
+	   public RestTemplate restTemplate(RestTemplateBuilder builder) {
+	      return builder.build();
+	   }
+	  
 }

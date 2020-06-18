@@ -58,6 +58,12 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-sleuth-zipkin</artifactId>
+		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-configuration-processor -->
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>

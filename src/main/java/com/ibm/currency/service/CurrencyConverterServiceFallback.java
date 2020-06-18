@@ -16,8 +16,7 @@ public class CurrencyConverterServiceFallback implements CurrencyConverterServic
 	@Override
 	public CurrencyExchangeBean getConversionFactor(CurrencyExchangeBean currencyExchangeBean){
 		// TODO Auto-generated method stub
-		CurrencyExchangeBean bean = new CurrencyExchangeBean();
-		bean.setMessage("N");	
+		CurrencyExchangeBean bean = new CurrencyExchangeBean();		
 		if(currencyExchangeBean.getCountryCode().equalsIgnoreCase("EUR")) {
 			bean.setConversionFactor(curencyExchangeConfig.getEUROconversionfactor());			
 		}else if(currencyExchangeBean.getCountryCode().equalsIgnoreCase("INR")) {
