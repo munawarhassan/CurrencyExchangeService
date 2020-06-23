@@ -9,7 +9,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Bean;	
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -32,13 +32,15 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 public class CurrencyExchangeServiceLB{
 
 	@Autowired
-	private CoreResponseModel respModel;	
-	
-	@Autowired
 	private LoadBalancerClient lbClient;
 
-	@Autowired
+	@Autowired	
 	private CurencyExchangeConfig curencyExchangeConfig;
+	
+
+	@Autowired
+	private CurrencyConverterServiceProxy proxyservice;
+
 	
 	  
    	@Autowired
@@ -47,7 +49,7 @@ public class CurrencyExchangeServiceLB{
 
 	 private ResponseEntity<?>  respEntity;
 	
-	public ResponseEntity<?>  convertCurrency(CurrencyExchangeBean currencyExchangeBean){
+	public ResponseEntity<?>  convertCurrency_RB(CurrencyExchangeBean currencyExchangeBean){
 		try {			
 			
 			ServiceInstance instance = lbClient.choose("CurrencyConversionFactorService");
@@ -55,10 +57,10 @@ public class CurrencyExchangeServiceLB{
 			RestTemplate restTemplate = new RestTemplate();
 			HttpEntity<CurrencyExchangeBean> httpEntity = new HttpEntity<CurrencyExchangeBean>(currencyExchangeBean);
 			ResponseEntity<CurrencyExchangeBean> responseEntity = restTemplate.exchange(baseUrl, HttpMethod.POST,
-					httpEntity, CurrencyExchangeBean.class);		
-		
-			currencyExchangeBean = populateXngBean(currencyExchangeBean,responseEntity);
-			return populateSuccessResponseWithResult(currencyExchangeBean, responseEntity.getBody().getMessage() +" "+ currencyExchangeBean.getCountryCode());
+					httpEntity, CurrencyExchangeBean.class);
+			currencyExchangeBean.setConversionFactor(responseEntity.getBody().getConversionFactor());			
+			return populateSuccessResponseWithResult(currencyExchangeBean);
+			
 		} catch (Exception ex) {
 		
 			return populateFailureResponse("Failed to convert currency as no record found");
@@ -66,73 +68,82 @@ public class CurrencyExchangeServiceLB{
 	}
 	
 	@HystrixCommand(fallbackMethod = "getDefaultConversionFactor")
-	public ResponseEntity<?>  convertCurrency_WithFallBack(CurrencyExchangeBean currencyExchangeBean){
-		//try {			
+	public ResponseEntity<?>  convertCurrency_RBWithFallBack(CurrencyExchangeBean currencyExchangeBean){
+		try {	
 			String baseUrl = "http://CurrencyConversionFactorService/currencyconversionfactor/getconversionfactor";			
 			HttpEntity<CurrencyExchangeBean> httpEntity = new HttpEntity<CurrencyExchangeBean>(currencyExchangeBean);
 			ResponseEntity<CurrencyExchangeBean> responseEntity = lbrestTemplate.exchange(baseUrl, HttpMethod.POST,
 					httpEntity, CurrencyExchangeBean.class);
-			currencyExchangeBean = populateXngBean(currencyExchangeBean,responseEntity);
-			return populateSuccessResponseWithResult(currencyExchangeBean, responseEntity.getBody().getMessage() +" "+ currencyExchangeBean.getCountryCode());
-		//} catch (Exception ex) {
-		
-			//return populateFailureResponse("Failed to convert currency as no record found");
-		//}
+			currencyExchangeBean.setConversionFactor(responseEntity.getBody().getConversionFactor());			
+			return populateSuccessResponseWithResult(currencyExchangeBean);
+		} catch (Exception ex) {			
+			return populateFailureResponse("Failed to convert currency as no record found");
+		}
 	}
 	
-	public ResponseEntity<?> getDefaultConversionFactor(CurrencyExchangeBean currencyExchangeBean){	
-		
-		CurrencyExchangeBean bean = new CurrencyExchangeBean();
+	
+
+	public ResponseEntity<?>  convertCurrency_FC(CurrencyExchangeBean currencyExchangeBean){
+		try {
+			CurrencyExchangeBean responseBean = proxyservice.getConversionFactor(currencyExchangeBean);
+			currencyExchangeBean.setConversionFactor(responseBean.getConversionFactor());
+			currencyExchangeBean.setDefaultpopulated(responseBean.isDefaultpopulated());
+			return populateSuccessResponseWithResult(currencyExchangeBean);		
+		} catch (Exception ex) {			
+			return populateFailureResponse("Failed to convert currency as no record found");
+		}
+	}
+	
+	
+	
+	public ResponseEntity<?> getDefaultConversionFactor(CurrencyExchangeBean currencyExchangeBean){
 		
 		if(currencyExchangeBean.getCountryCode().equalsIgnoreCase("EUR")) {
-			bean.setConversionFactor(curencyExchangeConfig.getEUROconversionfactor());			
+			currencyExchangeBean.setConversionFactor(curencyExchangeConfig.getEUROconversionfactor());			
 		}else if(currencyExchangeBean.getCountryCode().equalsIgnoreCase("INR")) {
-			bean.setConversionFactor(curencyExchangeConfig.getINRconversionfactor());			
+			currencyExchangeBean.setConversionFactor(curencyExchangeConfig.getINRconversionfactor());			
 		}else if(currencyExchangeBean.getCountryCode().equalsIgnoreCase("AUD")) {
-			bean.setConversionFactor(curencyExchangeConfig.getAUDconversionfactor());
-		}
-		bean.setMessage("Converter Service Down ... converted with DEFAULT RATE  from USD to");
-		//ResponseEntity<CurrencyExchangeBean> response = new ResponseEntity<CurrencyExchangeBean>(bean,HttpStatus.NOT_FOUND);
-		//return bean;
+			currencyExchangeBean.setConversionFactor(curencyExchangeConfig.getAUDconversionfactor());
+		}	
 		
-		
-		respModel = new CoreResponseModel();
-		respModel.setStatusCode(200);
-		respModel.setMessage("Converter Service Down ... converted with DEFAULT RATE  from USD to");
-		respModel.setResponseBody(bean);
-		respEntity = new ResponseEntity<Object>(respModel,HttpStatus.OK);
-		return respEntity;
-		
-	}
-	
-	
-	private CurrencyExchangeBean populateXngBean(CurrencyExchangeBean currencyExchangeBean,ResponseEntity<CurrencyExchangeBean> responseEntity) {
-
-		Double conversionfactor = responseEntity.getBody().getConversionFactor();
+		Double conversionfactor = currencyExchangeBean.getConversionFactor();
 		Double currencyVal = currencyExchangeBean.getCurrencyVal();
 		Double convertedAmount = currencyVal * conversionfactor ;
 		currencyExchangeBean.setConvertedAmount(convertedAmount);
-		currencyExchangeBean.setConversionFactor(conversionfactor);
-		return currencyExchangeBean;
+		CoreResponseModel respModel = new CoreResponseModel();
+		respModel.setMessage("Converter Service Down ... converted with DEFAULT RATE  from USD to");
+		respModel.setResponseBody(currencyExchangeBean);		
+		respEntity = new ResponseEntity<Object>(respModel,HttpStatus.OK);	
+		return respEntity;
+		
 	}
 	
-public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBean result, String message){
+	
+	public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBean currencyExchangeBean){
 		
-		respModel = new CoreResponseModel();
-		respModel.setStatusCode(200);
-		respModel.setMessage(message);
-		respModel.setResponseBody(result);
+		Double conversionfactor = currencyExchangeBean.getConversionFactor();
+		Double currencyVal = currencyExchangeBean.getCurrencyVal();
+		Double convertedAmount = currencyVal * conversionfactor ;
+		currencyExchangeBean.setConvertedAmount(convertedAmount);
+		CoreResponseModel respModel = new CoreResponseModel();
+		respModel.setStatusCode(200);		
+		if(currencyExchangeBean.isDefaultpopulated()) {
+			respModel.setMessage("Converter Service Down ... converted with DEFAULT RATE  from USD to" +" "+ currencyExchangeBean.getCountryCode());
+		}else {
+			respModel.setMessage("Successfully Coverted With Present Rate from USD to" +" "+ currencyExchangeBean.getCountryCode());
+		}
+		respModel.setResponseBody(currencyExchangeBean);
 		respEntity = new ResponseEntity<Object>(respModel,HttpStatus.OK);
 		return respEntity;
 	}
 
-public ResponseEntity<?>  populateFailureResponse( String message){	
-	respModel = new CoreResponseModel();
-	respModel.setStatusCode(HttpStatus.BAD_REQUEST.value());
-	respModel.setSuccess(false);
-	respModel.setMessage(message);		
-	respEntity = new ResponseEntity<Object>(respModel,HttpStatus.BAD_REQUEST);		
-	return respEntity;
-}
+	public ResponseEntity<?>  populateFailureResponse( String message){	
+		CoreResponseModel respModel = new CoreResponseModel();
+		respModel.setStatusCode(HttpStatus.BAD_REQUEST.value());
+		respModel.setMessage(message);
+		respModel.setSuccess(false);				
+		respEntity = new ResponseEntity<Object>(respModel,HttpStatus.BAD_REQUEST);		
+		return respEntity;
+	}
 
 }

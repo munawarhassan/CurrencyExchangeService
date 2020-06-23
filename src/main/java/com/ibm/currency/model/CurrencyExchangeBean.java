@@ -11,9 +11,10 @@ public class CurrencyExchangeBean extends CoreModel{
 	
 	private Double conversionFactor;
 	
-	private Double convertedAmount;
+	private Double convertedAmount;	
 	
-	private String message;
+	boolean defaultpopulated;
+	
 	
 	public String getCountryCode() {
 		return countryCode;
@@ -47,13 +48,15 @@ public class CurrencyExchangeBean extends CoreModel{
 		this.conversionFactor = conversionFactor;
 	}
 
-	public String getMessage() {
-		return message;
+	public boolean isDefaultpopulated() {
+		return defaultpopulated;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
-	}	
+	public void setDefaultpopulated(boolean defaultpopulated) {
+		this.defaultpopulated = defaultpopulated;
+	}
+	
+	
 
 	
 }

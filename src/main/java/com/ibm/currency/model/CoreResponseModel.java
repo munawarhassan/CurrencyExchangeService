@@ -16,27 +16,15 @@ public class CoreResponseModel{
 	
  @Transient
 	private boolean success = true;
-	
- @Transient
-  private String message;
+
 
  @Transient
 	private CoreModel responseBody;
  
  @Transient
-	private String path;
-	
-/* @Transient
-	private ArrayList<CoreModel> resBodyList;
-	
+ private String message;
+ 
 
-	
- @Transient
-	private String responseBodyStr;
-	
- @Transient
-	private ArrayList<String> respBodyListOfString;
-*/
 
 	public int getStatusCode() {
 		return statusCode;
@@ -58,15 +46,6 @@ public class CoreResponseModel{
 	}
 
 
-	public String getMessage() {
-		return message;
-	}
-
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
 
 	public CoreModel getResponseBody() {
 		return responseBody;
@@ -77,13 +56,16 @@ public class CoreResponseModel{
 		this.responseBody = responseBody;
 	}
 
-	public String getPath() {
-		return path;
+
+	public String getMessage() {
+		return message;
 	}
 
 
-	public void setPath(String path) {
-		this.path = path;
+	public void setMessage(String message) {
+		this.message = message;
 	}
+
+   
      
 }

@@ -59,21 +59,21 @@ public class CurrencyExchangeController{
 	@RequestMapping(path = "/convertcurrency/usingfeign", method = RequestMethod.POST, produces = {"application/json"})	
     public ResponseEntity<?> convertCurrencyUsingFeignClient(@RequestBody CurrencyExchangeBean currencyExchangeBean ) throws CoreException{ 
 			
-		return currencyexchangeservice.convertCurrency_FC(currencyExchangeBean);		
+		return currencyexchangeservicelb.convertCurrency_FC(currencyExchangeBean);		
   
 	}
 	
 	@RequestMapping(path = "/convertcurrency/usingribbon", method = RequestMethod.POST, produces = {"application/json"})	
     public ResponseEntity<?> convertCurrencyUsingRibbonClient(@RequestBody CurrencyExchangeBean currencyExchangeBean ) throws CoreException{ 
 			
-		return currencyexchangeservicelb.convertCurrency(currencyExchangeBean);		
+		return currencyexchangeservicelb.convertCurrency_RB(currencyExchangeBean);		
   
 	}
 	
 	@RequestMapping(path = "/convertcurrency/usingribbonwithfallback", method = RequestMethod.POST, produces = {"application/json"})	
     public ResponseEntity<?> convertCurrency(@RequestBody CurrencyExchangeBean currencyExchangeBean ) throws CoreException{ 
 			
-		return currencyexchangeservicelb.convertCurrency_WithFallBack(currencyExchangeBean);	
+		return currencyexchangeservicelb.convertCurrency_RBWithFallBack(currencyExchangeBean);	
 	
   
 	}
