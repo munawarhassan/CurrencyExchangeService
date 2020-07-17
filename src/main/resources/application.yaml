@@ -1,12 +1,16 @@
 server:
   port: 8082
-spring:   
+spring: 
+  cloud:
+    config:
+      uri: ${currencyservice.configserverurl}
+      fail-fast: false
   sleuth:
     trace-id128: true
     sampler:
       probability: 1.0
   zipkin:
-    base-url: ${currencyservice.zipkin.url}
+    base-url: ${currencyservice.zipkinurl}
     
 eureka:
   instance:
@@ -21,8 +25,8 @@ eureka:
     fetchRegistry: true
     prefer-same-zone-eureka: true
     serviceUrl:
-      defaultZone: ${currencyservice.eureka.url}  
-    
+      defaultZone: ${currencyservice.eurekaurl}
+   
 management:
   endpoints:
     web:

@@ -1,8 +1,4 @@
- spring:
-  cloud:
-    config:
-      uri: http://localhost:8888
-      fail-fast: false
+ spring:  
   application:
     name: CurrencyExchangeService
   profiles:
