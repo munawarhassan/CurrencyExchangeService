@@ -35,8 +35,8 @@ public class CurrencyExchangeController{
 
 	@RequestMapping(path = "/default", method = RequestMethod.GET)
 	public String getDefaultMessage() {
-		return curencyExchangeConfig.getGreetProp();
-		//return greetProp1;
+		//return curencyExchangeConfig.getGreetProp();
+		return greetProp1;
 		
 		
 	}	

@@ -1,6 +1,13 @@
- spring:  
+spring: 
+  cloud:
+    config:
+      uri: ${currencyservice.configserverurl}
+      fail-fast: false
+ 
   application:
     name: CurrencyExchangeService
   profiles:
     active: dev
 
+server:
+  port: 8082
