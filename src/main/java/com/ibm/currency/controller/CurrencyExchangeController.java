@@ -20,8 +20,9 @@ import com.ibm.currency.service.CurrencyExchangeServiceLB;
 @RequestMapping("/currencyexchange")
 public class CurrencyExchangeController{
 	
-	@Value("${currencyexchangeservice.greetprop}")
-	private String greetProp1;
+	/*
+	 * @Value("${currencyexchangeservice.greetprop}") private String greetProp1;
+	 */
 	
 	@Autowired
 	private CurencyExchangeConfig curencyExchangeConfig;
@@ -35,8 +36,8 @@ public class CurrencyExchangeController{
 
 	@RequestMapping(path = "/default", method = RequestMethod.GET)
 	public String getDefaultMessage() {
-		//return curencyExchangeConfig.getGreetProp();
-		return greetProp1;
+		return curencyExchangeConfig.getGreetProp();
+		//return greetProp1;
 		
 		
 	}	
