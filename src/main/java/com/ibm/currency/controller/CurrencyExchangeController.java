@@ -4,6 +4,7 @@ package com.ibm.currency.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,53 +32,28 @@ public class CurrencyExchangeController{
 	@Autowired
 	private CurrencyExchangeService currencyexchangeservice;
 	
-	@Autowired
-	private CurrencyExchangeServiceLB currencyexchangeservicelb;
 
 	@RequestMapping(path = "/default", method = RequestMethod.GET)
 	public String getDefaultMessage() {
 		return curencyExchangeConfig.getGreetProp();
-		//return greetProp1;
-		
+		//return greetProp1;		
 		
 	}	
-	
-	@RequestMapping(path = "/convertcurrency/withoutclient", method = RequestMethod.POST, produces = {"application/json"})	
-    public ResponseEntity<?> convertCurrencyWLB(@RequestBody CurrencyExchangeBean currencyExchangeBean ) throws CoreException{ 
+	@RequestMapping(path = "/convertcurrency/{amount}/{fromcurrency}/{tocurrency}", method = RequestMethod.GET, produces = {"application/json"})	
+    public ResponseEntity<?> convertToDesiredCurrency(@PathVariable double amount, @PathVariable String fromcurrency, @PathVariable String tocurrency ) throws CoreException{ 
 			
-		return currencyexchangeservice.convertCurrency_NoClient(currencyExchangeBean);		
+		CurrencyExchangeBean crexngbean = new CurrencyExchangeBean();
+		crexngbean.setCurrencyVal(amount);
+		crexngbean.setFromcurrency(fromcurrency);
+		crexngbean.setTocurrency(tocurrency);
+		return currencyexchangeservice.convertCurrency_FC(crexngbean);	
+	
   
 	}
 	
 	
-	@RequestMapping(path = "/convertcurrency/usingrdiscovery", method = RequestMethod.POST, produces = {"application/json"})	
-    public ResponseEntity<?> convertCurrencyUsingDiscoveryClient(@RequestBody CurrencyExchangeBean currencyExchangeBean ) throws CoreException{ 
-			
-		return currencyexchangeservice.convertCurrency_DC(currencyExchangeBean);		
-  
-	}
 	
-	@RequestMapping(path = "/convertcurrency/usingfeign", method = RequestMethod.POST, produces = {"application/json"})	
-    public ResponseEntity<?> convertCurrencyUsingFeignClient(@RequestBody CurrencyExchangeBean currencyExchangeBean ) throws CoreException{ 
-			
-		return currencyexchangeservicelb.convertCurrency_FC(currencyExchangeBean);		
-  
-	}
 	
-	@RequestMapping(path = "/convertcurrency/usingribbon", method = RequestMethod.POST, produces = {"application/json"})	
-    public ResponseEntity<?> convertCurrencyUsingRibbonClient(@RequestBody CurrencyExchangeBean currencyExchangeBean ) throws CoreException{ 
-			
-		return currencyexchangeservicelb.convertCurrency_RB(currencyExchangeBean);		
-  
-	}
-	
-	@RequestMapping(path = "/convertcurrency/usingribbonwithfallback", method = RequestMethod.POST, produces = {"application/json"})	
-    public ResponseEntity<?> convertCurrency(@RequestBody CurrencyExchangeBean currencyExchangeBean ) throws CoreException{ 
-			
-		return currencyexchangeservicelb.convertCurrency_RBWithFallBack(currencyExchangeBean);	
-	
-  
-	}
 	
 	
 }

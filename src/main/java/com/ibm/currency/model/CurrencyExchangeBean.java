@@ -5,7 +5,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class CurrencyExchangeBean extends CoreModel{
 	
-	private String countryCode;
+	private String fromcurrency;
+	
+	private String tocurrency;
 	
 	private Double currencyVal;
 	
@@ -16,12 +18,22 @@ public class CurrencyExchangeBean extends CoreModel{
 	boolean defaultpopulated;
 	
 	
-	public String getCountryCode() {
-		return countryCode;
+	
+
+	public String getFromcurrency() {
+		return fromcurrency;
 	}
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
+	public void setFromcurrency(String fromcurrency) {
+		this.fromcurrency = fromcurrency;
+	}
+
+	public String getTocurrency() {
+		return tocurrency;
+	}
+
+	public void setTocurrency(String tocurrency) {
+		this.tocurrency = tocurrency;
 	}
 
 	public Double getCurrencyVal() {

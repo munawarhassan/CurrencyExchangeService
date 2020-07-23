@@ -12,6 +12,7 @@ public class CurencyExchangeConfig {
 	private Double EUROconversionfactor;
 	private Double INRconversionfactor;
 	private Double AUDconversionfactor;
+	private Double GBPconversionfactor;
 	private String greetProp;
 	public Double getEUROconversionfactor() {
 		return EUROconversionfactor;
@@ -30,6 +31,14 @@ public class CurencyExchangeConfig {
 	}
 	public void setAUDconversionfactor(Double aUDconversionfactor) {
 		AUDconversionfactor = aUDconversionfactor;
+	}
+	
+	
+	public Double getGBPconversionfactor() {
+		return GBPconversionfactor;
+	}
+	public void setGBPconversionfactor(Double gBPconversionfactor) {
+		GBPconversionfactor = gBPconversionfactor;
 	}
 	public String getGreetProp() {
 		return greetProp;

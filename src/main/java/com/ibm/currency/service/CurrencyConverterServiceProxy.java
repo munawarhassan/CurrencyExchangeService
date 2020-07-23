@@ -10,14 +10,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ibm.currency.model.CoreException;
+import com.ibm.currency.model.CurrencyConversionFactor;
 import com.ibm.currency.model.CurrencyExchangeBean;
 
 
 @FeignClient(name = "CurrencyConversionFactorService" , fallback = CurrencyConverterServiceFallback.class)
 public interface CurrencyConverterServiceProxy {
 	
-	@RequestMapping(path = "/currencyconversionfactor/getconversionfactor", method = RequestMethod.POST, produces = {"application/json"})	
-    public CurrencyExchangeBean getConversionFactor(@RequestBody CurrencyExchangeBean currencyExchangeBean); 
+	
+	@RequestMapping(path = "/currencyconversionfactor/getconversionfactor/{currency}", method = RequestMethod.GET, produces = {"application/json"})	
+    public CurrencyConversionFactor getConversionFactor(@PathVariable(value = "currency" ) String currency) throws CoreException;
 			   
 	 
 }

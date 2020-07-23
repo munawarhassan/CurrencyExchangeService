@@ -30,81 +30,68 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 @Component
 public class CurrencyExchangeService{
 
-	
 	@Autowired
-	private DiscoveryClient discoveryClient;	
+	private CurrencyConverterServiceProxy proxyservice;
+	
 
 	private ResponseEntity<?>  respEntity;
-	
-   	@Autowired
-	@Lazy
-	RestTemplate restTemplate;
-	
-	public ResponseEntity<?>  convertCurrency_NoClient(CurrencyExchangeBean currencyExchangeBean){
-		try {			
-			
-			//String baseUrl = "http://localhost:60464/currencyconversionfactor/getconversionfactor";
-			String baseUrl = "http://CurrencyConversionFactorService/currencyconversionfactor/getconversionfactor";
-			HttpEntity<CurrencyExchangeBean> httpEntity = new HttpEntity<CurrencyExchangeBean>(currencyExchangeBean);			
-			ResponseEntity<CurrencyExchangeBean> responseEntity = restTemplate.exchange(baseUrl, HttpMethod.POST,
-					httpEntity, CurrencyExchangeBean.class);
-			currencyExchangeBean.setConversionFactor(responseEntity.getBody().getConversionFactor());					
-			//ResponseEntity<CurrencyExchangeBean> responseEntity = restTemplate1.getForEntity(baseUrl, CurrencyExchangeBean.class);// For Get Request
-			return populateSuccessResponseWithResult(currencyExchangeBean);
-			
-		} catch (Exception ex) {
-		
-			return populateFailureResponse(currencyExchangeBean);
-		}
-	}
-	
-	
-	public ResponseEntity<?>  convertCurrency_DC(CurrencyExchangeBean currencyExchangeBean){
+	 
+	 
+   	public ResponseEntity<?>  convertCurrency_FC(CurrencyExchangeBean currencyExchangeBean){
 		try {
-			
-			List<ServiceInstance> instances = discoveryClient.getInstances("CurrencyConversionFactorService");
-			System.out.println("Instances of CurrencyConversionFactorService found =" + instances.size());
-			for (ServiceInstance instance : instances) {
-				System.out.println(instance.getHost() + ":" + instance.getPort());
+			CurrencyConversionFactor fromcurrencyFactor = null;
+			if(!("USD".equalsIgnoreCase(currencyExchangeBean.getFromcurrency()))) {
+				fromcurrencyFactor = proxyservice.getConversionFactor(currencyExchangeBean.getFromcurrency());
+			}else {
+				fromcurrencyFactor = new CurrencyConversionFactor();
+				fromcurrencyFactor.setConversionFactor(1.00);
 			}
-			ServiceInstance instance = instances.get(0);
-			String baseUrl = "http://" + instance.getHost() + ":" + instance.getPort() + "/currencyconversionfactor/getconversionfactor";			
-			System.out.println("baseurl ="+ baseUrl);			
-			RestTemplate restTemplate1 = new RestTemplate();
-			HttpEntity<CurrencyExchangeBean> httpEntity = new HttpEntity<CurrencyExchangeBean>(currencyExchangeBean);
-			ResponseEntity<CurrencyExchangeBean> responseEntity = restTemplate1.exchange(baseUrl, HttpMethod.POST,
-					httpEntity, CurrencyExchangeBean.class);
-			currencyExchangeBean.setConversionFactor(responseEntity.getBody().getConversionFactor());			
-			return populateSuccessResponseWithResult(currencyExchangeBean);
-		} catch (Exception ex) {
-		
-			return populateFailureResponse(currencyExchangeBean);
-		}
+			
+			CurrencyConversionFactor tocurrencyFactor = null;
+			Double reqdConvertedAmount = null;
+			if(!("USD".equalsIgnoreCase(currencyExchangeBean.getTocurrency()))) {
+				tocurrencyFactor = proxyservice.getConversionFactor(currencyExchangeBean.getTocurrency());	
+				reqdConvertedAmount= (currencyExchangeBean.getCurrencyVal()) * ((fromcurrencyFactor.getConversionFactor())/(tocurrencyFactor.getConversionFactor()));
+			}else {
+				reqdConvertedAmount = (currencyExchangeBean.getCurrencyVal()) * (fromcurrencyFactor.getConversionFactor());
+			}
+			
+			currencyExchangeBean.setConvertedAmount (reqdConvertedAmount);
+			if(!("USD".equalsIgnoreCase(currencyExchangeBean.getFromcurrency()))) {
+				currencyExchangeBean.setDefaultpopulated(fromcurrencyFactor.isDefaultpopulated());
+			}else {
+				currencyExchangeBean.setDefaultpopulated(tocurrencyFactor.isDefaultpopulated());
+			}
+			
+			return populateSuccessResponseWithResult(currencyExchangeBean);		
+		} catch (Exception ex) {			
+			return populateFailureResponse("Failed to convert currency as no record found");
+	
 	}
-	
-	
-	public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBean currencyExchangeBean){
 		
-			Double conversionfactor = currencyExchangeBean.getConversionFactor();
-			Double currencyVal = currencyExchangeBean.getCurrencyVal();
-			Double convertedAmount = currencyVal * conversionfactor ;
-			currencyExchangeBean.setConvertedAmount(convertedAmount);
-			CoreResponseModel respModel = new CoreResponseModel();
-			respModel.setMessage("Successfully Coverted With Present Rate from USD to" +" "+ currencyExchangeBean.getCountryCode());		
-			respModel.setStatusCode(200);			
-			respModel.setResponseBody(currencyExchangeBean);
-			respEntity = new ResponseEntity<Object>(respModel,HttpStatus.OK);
-			return respEntity;
+  }
+   	
+public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBean currencyExchangeBean){
+		CoreResponseModel respModel = new CoreResponseModel();
+		respModel.setStatusCode(200);		
+		if(currencyExchangeBean.isDefaultpopulated()) {
+			respModel.setMessage("Converter Service Down ... converted with DEFAULT RATE  from " +currencyExchangeBean.getFromcurrency()+" to  "+ currencyExchangeBean.getTocurrency());
+		}else {
+			respModel.setMessage("Successfully Coverted With Present Rate  from " +currencyExchangeBean.getFromcurrency()+" to "+ currencyExchangeBean.getTocurrency());
 		}
-	
-	public ResponseEntity<?>  populateFailureResponse(CurrencyExchangeBean currencyExchangeBean){	
-		CoreResponseModel respModel = new CoreResponseModel();	
-		respModel = new CoreResponseModel();
-		respModel.setMessage("Failed to convert currency as no record found");
+		respModel.setResponseBody(currencyExchangeBean);
+		respEntity = new ResponseEntity<Object>(respModel,HttpStatus.OK);
+		return respEntity;
+	}
+
+	public ResponseEntity<?>  populateFailureResponse( String message){	
+		CoreResponseModel respModel = new CoreResponseModel();
 		respModel.setStatusCode(HttpStatus.BAD_REQUEST.value());
-		respModel.setSuccess(false);			
+		respModel.setMessage(message);
+		respModel.setSuccess(false);				
 		respEntity = new ResponseEntity<Object>(respModel,HttpStatus.BAD_REQUEST);		
 		return respEntity;
 	}
+	
 
 }
