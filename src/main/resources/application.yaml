@@ -23,7 +23,7 @@ eureka:
     fetchRegistry: true
     prefer-same-zone-eureka: true
     serviceUrl:
-      defaultZone: http://192.168.99.100:9411/
+      defaultZone: http://192.168.99.100:8761/eureka
    
 management:
   endpoints:
