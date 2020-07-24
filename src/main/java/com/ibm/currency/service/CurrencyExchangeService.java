@@ -1,31 +1,16 @@
 package com.ibm.currency.service;
 
-import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.cloud.netflix.ribbon.RibbonClient;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import com.ibm.currency.model.CoreException;
-import com.ibm.currency.model.CoreModel;
 import com.ibm.currency.model.CoreResponseModel;
-import com.ibm.currency.model.CurencyExchangeConfig;
 import com.ibm.currency.model.CurrencyConversionFactor;
 import com.ibm.currency.model.CurrencyExchangeBean;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 @Service
 @Component
 public class CurrencyExchangeService{
@@ -35,8 +20,8 @@ public class CurrencyExchangeService{
 	
 
 	private ResponseEntity<?>  respEntity;
-	 
-	 
+	private static Logger log = LoggerFactory.getLogger(CurrencyExchangeService.class);
+	
    	public ResponseEntity<?>  convertCurrency_FC(CurrencyExchangeBean currencyExchangeBean){
 		try {
 			CurrencyConversionFactor fromcurrencyFactor = null;
@@ -62,7 +47,7 @@ public class CurrencyExchangeService{
 			}else {
 				currencyExchangeBean.setDefaultpopulated(tocurrencyFactor.isDefaultpopulated());
 			}
-			
+			log.info("caurrency Value converted ");
 			return populateSuccessResponseWithResult(currencyExchangeBean);		
 		} catch (Exception ex) {			
 			return populateFailureResponse("Failed to convert currency as no record found");

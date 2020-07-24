@@ -21,9 +21,11 @@ import com.ibm.currency.service.CurrencyExchangeServiceLB;
 @RequestMapping("/currencyexchange")
 public class CurrencyExchangeController{
 	
+	
 	/*
 	 * @Value("${currencyexchangeservice.greetprop}") private String greetProp1;
 	 */
+	 
 	
 	@Autowired
 	private CurencyExchangeConfig curencyExchangeConfig;
