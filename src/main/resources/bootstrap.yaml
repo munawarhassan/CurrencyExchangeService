@@ -1,6 +1,6 @@
 spring:
   application:
-    name: CurrencyExchangeService
+    name: currencyexchangeservice
   profiles:
     active: dev
 
