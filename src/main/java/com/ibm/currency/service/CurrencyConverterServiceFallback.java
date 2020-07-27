@@ -8,12 +8,18 @@ import org.springframework.stereotype.Component;
 import com.ibm.currency.model.CoreException;
 import com.ibm.currency.model.CurencyExchangeConfig;
 import com.ibm.currency.model.CurrencyConversionFactor;
+import com.ibm.currency.model.CurencyExchangeDefault;
 
 @Component
 public class CurrencyConverterServiceFallback implements CurrencyConverterServiceProxy {
 
+	/*
+	 * @Autowired private CurencyExchangeConfig curencyExchangeConfig;
+	 */
+	
+
 	@Autowired
-	private CurencyExchangeConfig curencyExchangeConfig;
+	private CurencyExchangeDefault curencyExchangeConfig;
 	
 	private static Logger log = LoggerFactory.getLogger(CurrencyConverterServiceFallback.class);
 	
