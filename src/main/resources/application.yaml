@@ -1,14 +1,14 @@
 spring:
   cloud:
     config:
-      uri: http://192.168.99.100:8888
+      uri: ${currencyservice_configserverurl}
       fail-fast: false  
   sleuth:
     trace-id128: true
     sampler:
       probability: 1.0
   zipkin:
-    base-url: http://192.168.99.100:9411/
+    base-url: ${currencyservice_zipkinurl}
     
 eureka:
   instance:
@@ -23,7 +23,7 @@ eureka:
     fetchRegistry: true
     prefer-same-zone-eureka: true
     serviceUrl:
-      defaultZone: http://192.168.99.100:8761/eureka
+      defaultZone: ${currencyservice_eurekaurl}
    
 management:
   endpoints:

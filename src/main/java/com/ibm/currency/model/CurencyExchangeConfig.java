@@ -1,12 +1,10 @@
 package com.ibm.currency.model;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-@EnableConfigurationProperties
-@ConfigurationProperties("currencyexchangeservice")
+
+
+@ConfigurationProperties
 public class CurencyExchangeConfig {
 	
 	private Double EUROconversionfactor;
