@@ -31,7 +31,7 @@ public class CurrencyConverterServiceFallback implements CurrencyConverterServic
 		}else if(currency.equalsIgnoreCase("AUD")) {
 			defaultFactor.setConversionFactor(curencyExchangeConfig.getAUDconversionfactor());
 		}else if(currency.equalsIgnoreCase("GBP")) {
-			defaultFactor.setConversionFactor(curencyExchangeConfig.getAUDconversionfactor());
+			defaultFactor.setConversionFactor(curencyExchangeConfig.getGBPconversionfactor());
 		}
 		
 		defaultFactor.setDefaultpopulated(true);

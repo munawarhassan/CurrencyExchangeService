@@ -42,7 +42,7 @@ public class CurrencyExchangeController{
 		
 	}	
 	@RequestMapping(path = "/convertcurrency/{amount}/{fromcurrency}/{tocurrency}", method = RequestMethod.GET, produces = {"application/json"})	
-    public ResponseEntity<?> convertToDesiredCurrency(@PathVariable double amount, @PathVariable String fromcurrency, @PathVariable String tocurrency ) throws CoreException{ 
+    public ResponseEntity<?> convertCurrency(@PathVariable double amount, @PathVariable String fromcurrency, @PathVariable String tocurrency ) throws CoreException{ 
 			
 		CurrencyExchangeBean crexngbean = new CurrencyExchangeBean();
 		crexngbean.setCurrencyVal(amount);
@@ -53,7 +53,16 @@ public class CurrencyExchangeController{
   
 	}
 	
-	
+	@RequestMapping(path = "/convertcurrency1/{amount}/{fromcurrency}/{tocurrency}", method = RequestMethod.GET, produces = {"application/json"})	
+    
+	 public ResponseEntity<?> convertodesiredCurrency(@PathVariable double amount, @PathVariable String fromcurrency, @PathVariable String tocurrency ) throws CoreException{		
+		CurrencyExchangeBean crexngbean = new CurrencyExchangeBean();
+		crexngbean.setCurrencyVal(amount);
+		crexngbean.setFromcurrency(fromcurrency);
+		crexngbean.setTocurrency(tocurrency);
+		return currencyexchangeservice.convertCurrency_RBWithFallBack(crexngbean);	
+  
+	}
 	
 	
 	

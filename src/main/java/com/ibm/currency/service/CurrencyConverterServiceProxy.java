@@ -14,7 +14,7 @@ import com.ibm.currency.model.CurrencyConversionFactor;
 import com.ibm.currency.model.CurrencyExchangeBean;
 
 
-@FeignClient(name = "CurrencyConversionFactorService" , fallback = CurrencyConverterServiceFallback.class)
+@FeignClient(name = "currencyconversionfactorservice" , fallback = CurrencyConverterServiceFallback.class)
 public interface CurrencyConverterServiceProxy {
 	
 	

@@ -11,7 +11,7 @@ public class CurrencyExchangeBean extends CoreModel{
 	
 	private Double currencyVal;
 	
-	private Double conversionFactor;
+	//private Double conversionFactor;
 	
 	private Double convertedAmount;	
 	
@@ -52,13 +52,12 @@ public class CurrencyExchangeBean extends CoreModel{
 		this.convertedAmount = convertedAmount;
 	}
 
-	public Double getConversionFactor() {
-		return conversionFactor;
-	}
-
-	public void setConversionFactor(Double conversionFactor) {
-		this.conversionFactor = conversionFactor;
-	}
+	/*
+	 * public Double getConversionFactor() { return conversionFactor; }
+	 * 
+	 * public void setConversionFactor(Double conversionFactor) {
+	 * this.conversionFactor = conversionFactor; }
+	 */
 
 	public boolean isDefaultpopulated() {
 		return defaultpopulated;
