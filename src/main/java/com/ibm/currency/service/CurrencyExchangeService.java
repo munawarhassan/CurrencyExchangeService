@@ -78,7 +78,7 @@ public class CurrencyExchangeService{
 			log.info("caurrency Value converted ");
 			return populateSuccessResponseWithResult(currencyExchangeBean);		
 		} catch (Exception ex) {			
-			return populateFailureResponse("Failed to convert currency as no record found");
+			return populateFailureResponse("For Both/One of  the currency Don't have Default value ");
 	
 	}
 		
@@ -115,7 +115,7 @@ public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBea
 	 */
 	@HystrixCommand(fallbackMethod = "getDefaultConversionFactor")
 	public ResponseEntity<?>  convertCurrency_RBWithFallBack(CurrencyExchangeBean currencyExchangeBean){
-		try {	
+		
 			String baseUrl = "http://currencyconversionfactorservice/currencyconversionfactor/getconversionfactor/{currency}";	
 			
 		//	String baseUrl = "http://CurrencyConversionFactorService/currencyconversionfactor/getconversionfactor";			
@@ -154,9 +154,7 @@ public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBea
 			}
 			log.info("caurrency Value converted ");			
 			return populateSuccessResponseWithResult(currencyExchangeBean);
-		} catch (Exception ex) {			
-			return populateFailureResponse("Failed to convert currency as no record found");
-		}
+		
 	}
 	
 	
@@ -168,7 +166,9 @@ public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBea
 		  tocurrencyFactor.setConversionFactor(getDefaultValue(currencyExchangeBean.getTocurrency()));
 		  Double reqdConvertedAmount = null;
 		  
-		  if(!(fromcurrencyFactor.getConversionFactor() == 0.0 && tocurrencyFactor.getConversionFactor()== 0.0)) {
+		 
+			  
+			  try {
 			  reqdConvertedAmount= (currencyExchangeBean.getCurrencyVal()) * ((fromcurrencyFactor.getConversionFactor())/(tocurrencyFactor.getConversionFactor()));
 			  currencyExchangeBean.setConvertedAmount (reqdConvertedAmount);
 			  currencyExchangeBean.setDefaultpopulated(true);			
@@ -177,17 +177,20 @@ public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBea
 				respModel.setResponseBody(currencyExchangeBean);		
 				respEntity = new ResponseEntity<Object>(respModel,HttpStatus.OK);	
 				return respEntity;
+			  }catch (Exception ex) {		
+					
+					return populateFailureResponse("For Both/One of  the currency Don't have Default value ");
+					
+				}
 			
-		  }else {
-			  return populateFailureResponse("For Both/One of  the currency Don't have Default value ");
-		  }
+		 
 		 	
 	}
       
       
 	private  Double getDefaultValue(String currency) {
 		
-		 Double value = 0.00;
+		 Double value = null;
 		
 			  if(currency.equalsIgnoreCase("EUR")) {				  
 				  value = curencyExchangeConfig.getEUROconversionfactor();
