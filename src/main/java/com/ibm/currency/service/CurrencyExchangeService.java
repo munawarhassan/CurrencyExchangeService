@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.ibm.currency.model.CoreResponseModel;
 import com.ibm.currency.model.CurencyExchangeConfig;
+import com.ibm.currency.model.CurencyExchangeDefault;
 import com.ibm.currency.model.CurrencyConversionFactor;
 import com.ibm.currency.model.CurrencyExchangeBean;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
@@ -48,7 +49,9 @@ public class CurrencyExchangeService{
 	private ResponseEntity<?>  respEntity;
 	private static Logger log = LoggerFactory.getLogger(CurrencyExchangeService.class);
 	
-	@Autowired private CurencyExchangeConfig curencyExchangeConfig;	 
+	//@Autowired private CurencyExchangeConfig curencyExchangeConfig;	 
+	
+	@Autowired private CurencyExchangeDefault curencyExchangeConfig;
 	
    	public ResponseEntity<?>  convertCurrency_FC(CurrencyExchangeBean currencyExchangeBean){
 		try {
@@ -78,7 +81,7 @@ public class CurrencyExchangeService{
 			log.info("caurrency Value converted ");
 			return populateSuccessResponseWithResult(currencyExchangeBean);		
 		} catch (Exception ex) {			
-			return populateFailureResponse("For Both/One of  the currency Don't have Default value ");
+			return populateFailureResponse("Failed to convert currency as no record found");
 	
 	}
 		
@@ -123,7 +126,7 @@ public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBea
 			ResponseEntity<CurrencyConversionFactor> responseEntity = lbrestTemplate.exchange(baseUrl, HttpMethod.GET,
 					httpEntity, CurrencyConversionFactor.class);
 			currencyExchangeBean.setConversionFactor(responseEntity.getBody().getConversionFactor());	*/
-			
+	
 			CurrencyConversionFactor fromcurrencyFactor = null;
 			if(!("USD".equalsIgnoreCase(currencyExchangeBean.getFromcurrency()))) {
 				  Map<String, String> params = new HashMap<String, String>();
@@ -141,10 +144,17 @@ public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBea
 				  Map<String, String> params = new HashMap<String, String>();
 				    params.put("currency", currencyExchangeBean.getTocurrency());				     
 				   tocurrencyFactor = lbrestTemplate.getForObject(baseUrl, CurrencyConversionFactor.class, params);
-				reqdConvertedAmount= (currencyExchangeBean.getCurrencyVal()) * ((fromcurrencyFactor.getConversionFactor())/(tocurrencyFactor.getConversionFactor()));
+				//reqdConvertedAmount= (currencyExchangeBean.getCurrencyVal()) * ((fromcurrencyFactor.getConversionFactor())/(tocurrencyFactor.getConversionFactor()));
 			}else {
-				reqdConvertedAmount = (currencyExchangeBean.getCurrencyVal()) * (fromcurrencyFactor.getConversionFactor());
+				tocurrencyFactor = new CurrencyConversionFactor();
+				tocurrencyFactor.setConversionFactor(1.00);
+				//reqdConvertedAmount = (currencyExchangeBean.getCurrencyVal()) * (fromcurrencyFactor.getConversionFactor());
 			}
+			
+			
+			
+			reqdConvertedAmount= (currencyExchangeBean.getCurrencyVal()) * ((fromcurrencyFactor.getConversionFactor())/(tocurrencyFactor.getConversionFactor()));
+			
 			
 			currencyExchangeBean.setConvertedAmount (reqdConvertedAmount);
 			if(!("USD".equalsIgnoreCase(currencyExchangeBean.getFromcurrency()))) {
@@ -154,7 +164,7 @@ public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBea
 			}
 			log.info("caurrency Value converted ");			
 			return populateSuccessResponseWithResult(currencyExchangeBean);
-		
+			
 	}
 	
 	
@@ -165,15 +175,13 @@ public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBea
     	  CurrencyConversionFactor tocurrencyFactor =  new CurrencyConversionFactor();
 		  tocurrencyFactor.setConversionFactor(getDefaultValue(currencyExchangeBean.getTocurrency()));
 		  Double reqdConvertedAmount = null;
-		  
-		 
 			  
 			  try {
 			  reqdConvertedAmount= (currencyExchangeBean.getCurrencyVal()) * ((fromcurrencyFactor.getConversionFactor())/(tocurrencyFactor.getConversionFactor()));
 			  currencyExchangeBean.setConvertedAmount (reqdConvertedAmount);
 			  currencyExchangeBean.setDefaultpopulated(true);			
-				CoreResponseModel respModel = new CoreResponseModel();
-				respModel.setMessage("Converter Service Down ... converted with DEFAULT RATE  from USD to");
+				CoreResponseModel respModel = new CoreResponseModel();				
+				respModel.setMessage("Converter Service Down ... converted with DEFAULT RATE  from " +currencyExchangeBean.getFromcurrency()+" to  "+ currencyExchangeBean.getTocurrency());
 				respModel.setResponseBody(currencyExchangeBean);		
 				respEntity = new ResponseEntity<Object>(respModel,HttpStatus.OK);	
 				return respEntity;

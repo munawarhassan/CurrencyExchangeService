@@ -37,8 +37,10 @@ public class CurrencyExchangeController{
 
 	@RequestMapping(path = "/default", method = RequestMethod.GET)
 	public String getDefaultMessage() {
-		return curencyExchangeConfig.getGreetProp();
-		//return "I am hardcoded value from service 2";		
+		//return curencyExchangeConfig.getGreetProp();
+		//return "I am hardcoded value from service 2";
+		
+		return	"Hello , I am ready for service 2";
 		
 	}	
 	@RequestMapping(path = "/convertcurrency/{amount}/{fromcurrency}/{tocurrency}", method = RequestMethod.GET, produces = {"application/json"})	

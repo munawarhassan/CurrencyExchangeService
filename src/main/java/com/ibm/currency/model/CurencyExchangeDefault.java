@@ -15,6 +15,8 @@ public class CurencyExchangeDefault {
 	
 	
 	
+	
+	
 	public CurencyExchangeDefault() {
 		super();
 		// TODO Auto-generated constructor stub
