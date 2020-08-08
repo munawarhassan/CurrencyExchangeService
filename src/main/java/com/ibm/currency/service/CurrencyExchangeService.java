@@ -187,7 +187,7 @@ public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBea
 				return respEntity;
 			  }catch (Exception ex) {		
 					
-					return populateFailureResponse("For Both/One of  the currency Don't have Default value ");
+					return populateFailureResponse("For Both/One of  the currency Data not availabe and Don't have Default value ");
 					
 				}
 			
