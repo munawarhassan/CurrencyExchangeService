@@ -1,4 +1,8 @@
-spring:
+spring: 
+  cloud:
+    config:
+      uri: ${currencyservice.configserverurl:http://localhost:8888}
+      fail-fast: false
   application:
     name: currencyexchangeservice
   profiles:

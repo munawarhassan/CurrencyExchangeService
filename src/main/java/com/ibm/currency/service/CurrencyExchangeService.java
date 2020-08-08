@@ -49,9 +49,9 @@ public class CurrencyExchangeService{
 	private ResponseEntity<?>  respEntity;
 	private static Logger log = LoggerFactory.getLogger(CurrencyExchangeService.class);
 	
-	//@Autowired private CurencyExchangeConfig curencyExchangeConfig;	 
+	@Autowired private CurencyExchangeConfig curencyExchangeConfig;	 
 	
-	@Autowired private CurencyExchangeDefault curencyExchangeConfig;
+	//@Autowired private CurencyExchangeDefault curencyExchangeConfig;
 	
    	public ResponseEntity<?>  convertCurrency_FC(CurrencyExchangeBean currencyExchangeBean){
 		try {
@@ -180,14 +180,15 @@ public ResponseEntity<?>   populateSuccessResponseWithResult(CurrencyExchangeBea
 			  reqdConvertedAmount= (currencyExchangeBean.getCurrencyVal()) * ((fromcurrencyFactor.getConversionFactor())/(tocurrencyFactor.getConversionFactor()));
 			  currencyExchangeBean.setConvertedAmount (reqdConvertedAmount);
 			  currencyExchangeBean.setDefaultpopulated(true);			
-				CoreResponseModel respModel = new CoreResponseModel();				
+				CoreResponseModel respModel = new CoreResponseModel();	
+				respModel.setStatusCode(200);
 				respModel.setMessage("Converter Service Down ... converted with DEFAULT RATE  from " +currencyExchangeBean.getFromcurrency()+" to  "+ currencyExchangeBean.getTocurrency());
 				respModel.setResponseBody(currencyExchangeBean);		
 				respEntity = new ResponseEntity<Object>(respModel,HttpStatus.OK);	
 				return respEntity;
 			  }catch (Exception ex) {		
 					
-					return populateFailureResponse("For Both/One of  the currency Data not availabe and Don't have Default value ");
+					return populateFailureResponse(" Converter Service Down and For Both/One of  the currency  Don't have Default value ");
 					
 				}
 			
